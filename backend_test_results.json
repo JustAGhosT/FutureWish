@@ -1,0 +1,135 @@
+[
+  {
+    "test": "GET /api/",
+    "success": true,
+    "details": "Status: 200, Message: EngageMesh API - Feature Management Platform",
+    "timestamp": "2025-07-17T23:51:35.884331",
+    "response_data": null
+  },
+  {
+    "test": "GET /api/health",
+    "success": true,
+    "details": "Status: 200, Health: healthy",
+    "timestamp": "2025-07-17T23:51:35.894847",
+    "response_data": null
+  },
+  {
+    "test": "GET /auth/me (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-17T23:51:35.945963",
+    "response_data": null
+  },
+  {
+    "test": "PUT /auth/me (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-17T23:51:35.956258",
+    "response_data": null
+  },
+  {
+    "test": "POST /status (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-17T23:51:36.005603",
+    "response_data": null
+  },
+  {
+    "test": "GET /status (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-17T23:51:36.012981",
+    "response_data": null
+  },
+  {
+    "test": "GET /users/leaderboard (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-17T23:51:36.019944",
+    "response_data": null
+  },
+  {
+    "test": "GET /auth/me (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-17T23:51:36.068669",
+    "response_data": null
+  },
+  {
+    "test": "PUT /auth/me (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-17T23:51:36.075601",
+    "response_data": null
+  },
+  {
+    "test": "POST /status (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-17T23:51:36.123074",
+    "response_data": null
+  },
+  {
+    "test": "GET /status (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-17T23:51:36.129469",
+    "response_data": null
+  },
+  {
+    "test": "GET /users/leaderboard (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-17T23:51:36.176032",
+    "response_data": null
+  },
+  {
+    "test": "JWT Middleware (Empty token)",
+    "success": true,
+    "details": "Correctly rejected malformed token",
+    "timestamp": "2025-07-17T23:51:36.183302",
+    "response_data": null
+  },
+  {
+    "test": "JWT Middleware (Non-JWT string)",
+    "success": true,
+    "details": "Correctly rejected malformed token",
+    "timestamp": "2025-07-17T23:51:36.190384",
+    "response_data": null
+  },
+  {
+    "test": "JWT Middleware (Bearer without token)",
+    "success": true,
+    "details": "Correctly rejected malformed token",
+    "timestamp": "2025-07-17T23:51:36.237403",
+    "response_data": null
+  },
+  {
+    "test": "JWT Middleware (Wrong auth scheme)",
+    "success": true,
+    "details": "Correctly rejected malformed token",
+    "timestamp": "2025-07-17T23:51:36.244196",
+    "response_data": null
+  },
+  {
+    "test": "Environment Variables",
+    "success": true,
+    "details": "Supabase JWT secret appears to be loaded (JWT verification working)",
+    "timestamp": "2025-07-17T23:51:36.255628",
+    "response_data": null
+  },
+  {
+    "test": "Database Connection",
+    "success": true,
+    "details": "Server responding (MongoDB connection likely working)",
+    "timestamp": "2025-07-17T23:51:36.302263",
+    "response_data": null
+  },
+  {
+    "test": "CORS Configuration",
+    "success": false,
+    "details": "CORS headers not found in response",
+    "timestamp": "2025-07-17T23:51:36.308468",
+    "response_data": null
+  }
+]
