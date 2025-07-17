@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import axios from 'axios'
 
-const AuthContext = createContext()
+const AuthContext = createContext({})
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
@@ -22,12 +22,16 @@ export const AuthProvider = ({ children }) => {
     // Get initial session
     const getSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        setSession(session)
-        setUser(session?.user ?? null)
-        
-        if (session) {
-          await fetchUserProfile(session.access_token)
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) {
+          console.error('Error getting session:', error)
+        } else {
+          setSession(session)
+          setUser(session?.user ?? null)
+          
+          if (session) {
+            await fetchUserProfile(session.access_token)
+          }
         }
       } catch (error) {
         console.error('Error getting session:', error)
@@ -76,7 +80,10 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut()
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Error signing out:', error)
+      }
       setUserProfile(null)
     } catch (error) {
       console.error('Error signing out:', error)
