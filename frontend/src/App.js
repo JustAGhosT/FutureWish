@@ -4,11 +4,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import FeatureList from "./components/Features/FeatureList";
+import RequestList from "./components/Requests/RequestList";
+import MyRequests from "./components/Requests/MyRequests";
 import axios from "axios";
 
 const AppContent = () => {
   const { user, session, loading } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
+  const [currentView, setCurrentView] = useState('features');
 
   useEffect(() => {
     if (session) {
@@ -113,6 +116,40 @@ const AppContent = () => {
               <h1 className="text-2xl font-bold text-blue-600">EngageMesh</h1>
             </div>
             
+            {/* Navigation */}
+            <div className="flex items-center space-x-6">
+              <button
+                onClick={() => setCurrentView('features')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  currentView === 'features' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Rate Features
+              </button>
+              <button
+                onClick={() => setCurrentView('requests')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  currentView === 'requests' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Feature Requests
+              </button>
+              <button
+                onClick={() => setCurrentView('my-requests')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  currentView === 'my-requests' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                My Requests
+              </button>
+            </div>
+            
             <div className="flex items-center space-x-4">
               {userProfile && (
                 <div className="flex items-center space-x-2">
@@ -147,7 +184,9 @@ const AppContent = () => {
       </nav>
 
       <main>
-        <FeatureList />
+        {currentView === 'features' && <FeatureList />}
+        {currentView === 'requests' && <RequestList />}
+        {currentView === 'my-requests' && <MyRequests />}
       </main>
     </div>
   );
