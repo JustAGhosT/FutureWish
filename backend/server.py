@@ -16,7 +16,14 @@ from models import (
     RatingResponse, FeatureWithRatings, RatingStats, FeatureCategory, 
     FeatureStatus, RatingType, PointsConfig
 )
+from request_models import (
+    FeatureRequest, FeatureRequestCreate, FeatureRequestUpdate, AdminRequestUpdate,
+    RequestVote, RequestVoteCreate, RequestComment, RequestCommentCreate,
+    RequestStatus, RequestPriority, RequestType, RequestPointsConfig,
+    FeatureRequestResponse, RequestCommentResponse, RequestAnalytics
+)
 from feature_service import FeatureRatingService
+from request_service import FeatureRequestService
 
 
 ROOT_DIR = Path(__file__).parent
