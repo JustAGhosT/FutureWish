@@ -475,23 +475,150 @@ async def get_request_comments(
         logging.error(f"Error getting comments: {e}")
         raise HTTPException(status_code=500, detail="Error retrieving comments")
 
-# Admin routes (basic implementation)
+# GitHub Integration Routes
+@api_router.post("/github/sync/{request_id}")
+async def sync_request_to_github(
+    request_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Sync an approved feature request to GitHub"""
+    try:
+        result = await github_service.sync_request_to_github(request_id, current_user.id)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logging.error(f"Error syncing to GitHub: {e}")
+        raise HTTPException(status_code=500, detail="Error syncing to GitHub")
+
+@api_router.get("/github/integrations", response_model=List[GitHubIntegrationResponse])
+async def get_github_integrations(
+    skip: int = 0,
+    limit: int = 20,
+    current_user: User = Depends(get_current_user)
+):
+    """Get all GitHub integrations"""
+    try:
+        integrations = await github_service.get_integrations(skip, limit)
+        return integrations
+    except Exception as e:
+        logging.error(f"Error getting GitHub integrations: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving GitHub integrations")
+
+@api_router.get("/github/integrations/{request_id}", response_model=GitHubIntegrationResponse)
+async def get_github_integration(
+    request_id: str,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get GitHub integration for a specific request"""
+    try:
+        integration = await github_service.get_integration_by_request_id(request_id)
+        if not integration:
+            raise HTTPException(status_code=404, detail="Integration not found")
+        
+        return integration
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error getting GitHub integration: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving GitHub integration")
+
+@api_router.get("/github/logs", response_model=List[GitHubSyncLogResponse])
+async def get_github_sync_logs(
+    integration_id: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50,
+    current_user: User = Depends(get_current_user)
+):
+    """Get GitHub sync logs"""
+    try:
+        logs = await github_service.get_sync_logs(integration_id, skip, limit)
+        return logs
+    except Exception as e:
+        logging.error(f"Error getting GitHub sync logs: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving sync logs")
+
+@api_router.get("/github/stats", response_model=GitHubSyncStats)
+async def get_github_sync_stats(
+    current_user: User = Depends(get_current_user)
+):
+    """Get GitHub sync statistics"""
+    try:
+        stats = await github_service.get_sync_stats()
+        return stats
+    except Exception as e:
+        logging.error(f"Error getting GitHub sync stats: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving sync stats")
+
+@api_router.post("/github/webhook")
+async def github_webhook(request: Request):
+    """Handle GitHub webhook events"""
+    try:
+        # Get signature from headers
+        signature = request.headers.get("X-Hub-Signature-256", "")
+        
+        # Get raw body
+        body = await request.body()
+        
+        # Parse JSON payload
+        import json
+        payload = json.loads(body.decode('utf-8'))
+        
+        # Process webhook
+        result = await github_service.handle_github_webhook(payload, signature)
+        
+        return result
+    except Exception as e:
+        logging.error(f"Error handling GitHub webhook: {e}")
+        raise HTTPException(status_code=500, detail="Error processing webhook")
+
+@api_router.get("/github/status")
+async def get_github_status(current_user: AuthUser = Depends(verify_jwt)):
+    """Get GitHub integration status"""
+    try:
+        from github_service import github_service as gh_service
+        
+        return {
+            "is_configured": gh_service.is_configured(),
+            "repository": {
+                "owner": gh_service.repo_owner,
+                "name": gh_service.repo_name,
+                "url": gh_service.get_repository_url()
+            },
+            "webhook_secret_configured": bool(gh_service.webhook_secret)
+        }
+    except Exception as e:
+        logging.error(f"Error getting GitHub status: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving GitHub status")
+
+# Enhanced admin routes with GitHub integration
 @api_router.put("/admin/requests/{request_id}")
 async def admin_update_request(
     request_id: str,
     update_data: AdminRequestUpdate,
+    sync_to_github: bool = False,
     current_user: User = Depends(get_current_user)
 ):
-    """Admin update request status"""
+    """Admin update request status with optional GitHub sync"""
     try:
-        # For now, any authenticated user can act as admin
-        # In production, add proper role checking
+        # Update request
         updated_request = await request_service.admin_update_request(
             request_id, current_user.id, update_data
         )
         
         if not updated_request:
             raise HTTPException(status_code=404, detail="Request not found")
+        
+        # Sync to GitHub if requested and status is approved
+        if sync_to_github and update_data.status == RequestStatus.APPROVED:
+            try:
+                sync_result = await github_service.sync_request_to_github(
+                    request_id, current_user.id
+                )
+                updated_request.github_sync_result = sync_result
+            except Exception as e:
+                logging.error(f"Error syncing to GitHub: {e}")
+                updated_request.github_sync_error = str(e)
         
         return updated_request
     except ValueError as e:
@@ -505,13 +632,27 @@ async def admin_update_request(
 @api_router.post("/admin/requests/{request_id}/convert")
 async def convert_request_to_feature(
     request_id: str,
+    sync_to_github: bool = True,
     current_user: User = Depends(get_current_user)
 ):
-    """Convert approved request to ratable feature"""
+    """Convert approved request to ratable feature with optional GitHub sync"""
     try:
+        # Convert request to feature
         result = await request_service.convert_request_to_feature(
             request_id, current_user.id
         )
+        
+        # Sync to GitHub if requested
+        if sync_to_github:
+            try:
+                sync_result = await github_service.sync_request_to_github(
+                    request_id, current_user.id
+                )
+                result["github_sync_result"] = sync_result
+            except Exception as e:
+                logging.error(f"Error syncing to GitHub: {e}")
+                result["github_sync_error"] = str(e)
+        
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
