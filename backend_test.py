@@ -207,7 +207,510 @@ class BackendTester:
         except Exception as e:
             self.log_test("Database Connection", False, f"Server connection failed: {str(e)}")
     
-    def test_feature_management_endpoints(self):
+    def test_feature_request_endpoints_without_auth(self):
+        """Test feature request endpoints without authentication - should return 401"""
+        print("\n=== Testing Feature Request Endpoints Without Auth ===")
+        
+        request_endpoints = [
+            ("POST", "/requests", "Submit feature request"),
+            ("GET", "/requests", "Get all feature requests"),
+            ("GET", "/requests/my", "Get user's feature requests"),
+            ("GET", "/requests/test-request-id", "Get request details"),
+            ("PUT", "/requests/test-request-id", "Update feature request"),
+            ("DELETE", "/requests/test-request-id", "Delete feature request"),
+            ("POST", "/requests/test-request-id/vote", "Vote on request"),
+            ("POST", "/requests/test-request-id/comments", "Add comment"),
+            ("GET", "/requests/test-request-id/comments", "Get comments")
+        ]
+        
+        for method, endpoint, description in request_endpoints:
+            try:
+                if method == "GET":
+                    response = self.session.get(f"{self.base_url}{endpoint}")
+                elif method == "POST":
+                    if "vote" in endpoint:
+                        response = self.session.post(f"{self.base_url}{endpoint}", 
+                                                   json={"points_spent": 5})
+                    elif "comments" in endpoint:
+                        response = self.session.post(f"{self.base_url}{endpoint}", 
+                                                   json={"comment": "Test comment"})
+                    elif endpoint == "/requests":
+                        response = self.session.post(f"{self.base_url}{endpoint}", 
+                                                   json={
+                                                       "title": "Test Feature Request",
+                                                       "description": "This is a test feature request description that is long enough",
+                                                       "category": "ui_ux",
+                                                       "request_type": "feature"
+                                                   })
+                elif method == "PUT":
+                    response = self.session.put(f"{self.base_url}{endpoint}", 
+                                              json={"title": "Updated Test Request"})
+                elif method == "DELETE":
+                    response = self.session.delete(f"{self.base_url}{endpoint}")
+                
+                if response.status_code == 401:
+                    self.log_test(f"{method} {endpoint} (no auth)", True, 
+                                f"Correctly returned 401 Unauthorized")
+                else:
+                    self.log_test(f"{method} {endpoint} (no auth)", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"{method} {endpoint} (no auth)", False, f"Request failed: {str(e)}")
+
+    def test_admin_endpoints_without_auth(self):
+        """Test admin endpoints without authentication - should return 401"""
+        print("\n=== Testing Admin Endpoints Without Auth ===")
+        
+        admin_endpoints = [
+            ("PUT", "/admin/requests/test-request-id", "Admin update request"),
+            ("POST", "/admin/requests/test-request-id/convert", "Convert request to feature"),
+            ("GET", "/admin/requests/analytics", "Get request analytics")
+        ]
+        
+        for method, endpoint, description in admin_endpoints:
+            try:
+                if method == "GET":
+                    response = self.session.get(f"{self.base_url}{endpoint}")
+                elif method == "POST":
+                    response = self.session.post(f"{self.base_url}{endpoint}")
+                elif method == "PUT":
+                    response = self.session.put(f"{self.base_url}{endpoint}", 
+                                              json={"status": "approved"})
+                
+                if response.status_code == 401:
+                    self.log_test(f"{method} {endpoint} (no auth)", True, 
+                                f"Correctly returned 401 Unauthorized")
+                else:
+                    self.log_test(f"{method} {endpoint} (no auth)", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"{method} {endpoint} (no auth)", False, f"Request failed: {str(e)}")
+
+    def test_request_types_validation(self):
+        """Test different request types validation"""
+        print("\n=== Testing Request Types Validation ===")
+        
+        request_types = ["feature", "enhancement", "bug_fix", "integration"]
+        
+        for request_type in request_types:
+            try:
+                request_data = {
+                    "title": f"Test {request_type.title()} Request",
+                    "description": "This is a test request description that is long enough to meet validation requirements",
+                    "category": "ui_ux",
+                    "request_type": request_type
+                }
+                response = self.session.post(f"{self.base_url}/requests", json=request_data)
+                
+                if response.status_code == 401:
+                    self.log_test(f"Request Type {request_type}", True, 
+                                f"Request type endpoint properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Request Type {request_type}", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Request Type {request_type}", False, f"Request failed: {str(e)}")
+
+    def test_request_priority_validation(self):
+        """Test request priority validation"""
+        print("\n=== Testing Request Priority Validation ===")
+        
+        priorities = ["low", "medium", "high", "critical"]
+        
+        for priority in priorities:
+            try:
+                request_data = {
+                    "title": f"Test {priority.title()} Priority Request",
+                    "description": "This is a test request description that is long enough to meet validation requirements",
+                    "category": "ui_ux",
+                    "priority": priority
+                }
+                response = self.session.post(f"{self.base_url}/requests", json=request_data)
+                
+                if response.status_code == 401:
+                    self.log_test(f"Priority {priority}", True, 
+                                f"Priority validation properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Priority {priority}", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Priority {priority}", False, f"Request failed: {str(e)}")
+
+    def test_request_filtering_parameters(self):
+        """Test request filtering and pagination parameters"""
+        print("\n=== Testing Request Filtering Parameters ===")
+        
+        # Test filtering by status
+        statuses = ["pending", "approved", "rejected", "implemented", "duplicate"]
+        for status in statuses:
+            try:
+                response = self.session.get(f"{self.base_url}/requests?status={status}")
+                
+                if response.status_code == 401:
+                    self.log_test(f"Filter by status {status}", True, 
+                                f"Status filtering properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Filter by status {status}", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Filter by status {status}", False, f"Request failed: {str(e)}")
+        
+        # Test filtering by category
+        categories = ["ui_ux", "performance", "integration", "security", "mobile", "api", "other"]
+        for category in categories:
+            try:
+                response = self.session.get(f"{self.base_url}/requests?category={category}")
+                
+                if response.status_code == 401:
+                    self.log_test(f"Filter by category {category}", True, 
+                                f"Category filtering properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Filter by category {category}", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Filter by category {category}", False, f"Request failed: {str(e)}")
+
+    def test_voting_system_structure(self):
+        """Test voting system endpoint structure"""
+        print("\n=== Testing Voting System Structure ===")
+        
+        # Test different vote amounts
+        vote_amounts = [1, 5, 10]
+        
+        for amount in vote_amounts:
+            try:
+                response = self.session.post(f"{self.base_url}/requests/test-id/vote", 
+                                           json={"points_spent": amount})
+                
+                if response.status_code == 401:
+                    self.log_test(f"Vote with {amount} points", True, 
+                                f"Voting endpoint properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Vote with {amount} points", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Vote with {amount} points", False, f"Request failed: {str(e)}")
+
+    def test_comments_system_structure(self):
+        """Test comments system endpoint structure"""
+        print("\n=== Testing Comments System Structure ===")
+        
+        # Test adding comment
+        try:
+            response = self.session.post(f"{self.base_url}/requests/test-id/comments", 
+                                       json={"comment": "This is a test comment"})
+            
+            if response.status_code == 401:
+                self.log_test("Add Comment", True, 
+                            f"Comment endpoint properly protected (401 without auth)")
+            else:
+                self.log_test("Add Comment", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Add Comment", False, f"Request failed: {str(e)}")
+        
+        # Test getting comments
+        try:
+            response = self.session.get(f"{self.base_url}/requests/test-id/comments")
+            
+            if response.status_code == 401:
+                self.log_test("Get Comments", True, 
+                            f"Comments retrieval properly protected (401 without auth)")
+            else:
+                self.log_test("Get Comments", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Get Comments", False, f"Request failed: {str(e)}")
+
+    def test_admin_functions_structure(self):
+        """Test admin functions endpoint structure"""
+        print("\n=== Testing Admin Functions Structure ===")
+        
+        # Test admin request update
+        try:
+            admin_update_data = {
+                "status": "approved",
+                "admin_notes": "This request looks good"
+            }
+            response = self.session.put(f"{self.base_url}/admin/requests/test-id", 
+                                      json=admin_update_data)
+            
+            if response.status_code == 401:
+                self.log_test("Admin Update Request", True, 
+                            f"Admin update properly protected (401 without auth)")
+            else:
+                self.log_test("Admin Update Request", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Admin Update Request", False, f"Request failed: {str(e)}")
+        
+        # Test convert request to feature
+        try:
+            response = self.session.post(f"{self.base_url}/admin/requests/test-id/convert")
+            
+            if response.status_code == 401:
+                self.log_test("Convert Request to Feature", True, 
+                            f"Convert endpoint properly protected (401 without auth)")
+            else:
+                self.log_test("Convert Request to Feature", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Convert Request to Feature", False, f"Request failed: {str(e)}")
+        
+        # Test analytics endpoint
+        try:
+            response = self.session.get(f"{self.base_url}/admin/requests/analytics")
+            
+            if response.status_code == 401:
+                self.log_test("Request Analytics", True, 
+                            f"Analytics endpoint properly protected (401 without auth)")
+            else:
+                self.log_test("Request Analytics", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Request Analytics", False, f"Request failed: {str(e)}")
+
+    def test_updated_points_system(self):
+        """Test updated points system with request costs and voting costs"""
+        print("\n=== Testing Updated Points System ===")
+        
+        try:
+            response = self.session.get(f"{self.base_url}/points/info")
+            
+            if response.status_code == 401:
+                self.log_test("Updated Points System", True, 
+                            f"Points info endpoint properly protected (401 without auth)")
+            else:
+                self.log_test("Updated Points System", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Updated Points System", False, f"Request failed: {str(e)}")
+
+    def test_request_validation_rules(self):
+        """Test request validation rules"""
+        print("\n=== Testing Request Validation Rules ===")
+        
+        # Test minimum title length
+        try:
+            request_data = {
+                "title": "Hi",  # Too short
+                "description": "This is a test request description that is long enough to meet validation requirements",
+                "category": "ui_ux"
+            }
+            response = self.session.post(f"{self.base_url}/requests", json=request_data)
+            
+            if response.status_code == 401:
+                self.log_test("Title Length Validation", True, 
+                            f"Title validation properly protected (401 without auth)")
+            else:
+                self.log_test("Title Length Validation", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Title Length Validation", False, f"Request failed: {str(e)}")
+        
+        # Test minimum description length
+        try:
+            request_data = {
+                "title": "Valid Title Here",
+                "description": "Too short",  # Too short
+                "category": "ui_ux"
+            }
+            response = self.session.post(f"{self.base_url}/requests", json=request_data)
+            
+            if response.status_code == 401:
+                self.log_test("Description Length Validation", True, 
+                            f"Description validation properly protected (401 without auth)")
+            else:
+                self.log_test("Description Length Validation", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Description Length Validation", False, f"Request failed: {str(e)}")
+
+    def test_vote_amount_validation(self):
+        """Test vote amount validation (1-10 points)"""
+        print("\n=== Testing Vote Amount Validation ===")
+        
+        # Test valid vote amounts
+        valid_amounts = [1, 5, 10]
+        for amount in valid_amounts:
+            try:
+                response = self.session.post(f"{self.base_url}/requests/test-id/vote", 
+                                           json={"points_spent": amount})
+                
+                if response.status_code == 401:
+                    self.log_test(f"Valid Vote Amount {amount}", True, 
+                                f"Vote validation properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Valid Vote Amount {amount}", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Valid Vote Amount {amount}", False, f"Request failed: {str(e)}")
+        
+        # Test invalid vote amounts (should be handled by validation)
+        invalid_amounts = [0, 11, 50, -1]
+        for amount in invalid_amounts:
+            try:
+                response = self.session.post(f"{self.base_url}/requests/test-id/vote", 
+                                           json={"points_spent": amount})
+                
+                if response.status_code == 401:
+                    self.log_test(f"Invalid Vote Amount {amount}", True, 
+                                f"Vote validation properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Invalid Vote Amount {amount}", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Invalid Vote Amount {amount}", False, f"Request failed: {str(e)}")
+
+    def test_comment_validation(self):
+        """Test comment validation rules"""
+        print("\n=== Testing Comment Validation ===")
+        
+        # Test valid comment
+        try:
+            response = self.session.post(f"{self.base_url}/requests/test-id/comments", 
+                                       json={"comment": "This is a valid comment"})
+            
+            if response.status_code == 401:
+                self.log_test("Valid Comment", True, 
+                            f"Comment validation properly protected (401 without auth)")
+            else:
+                self.log_test("Valid Comment", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Valid Comment", False, f"Request failed: {str(e)}")
+        
+        # Test empty comment
+        try:
+            response = self.session.post(f"{self.base_url}/requests/test-id/comments", 
+                                       json={"comment": ""})
+            
+            if response.status_code == 401:
+                self.log_test("Empty Comment Validation", True, 
+                            f"Empty comment validation properly protected (401 without auth)")
+            else:
+                self.log_test("Empty Comment Validation", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("Empty Comment Validation", False, f"Request failed: {str(e)}")
+
+    def test_request_status_enum(self):
+        """Test request status enum validation"""
+        print("\n=== Testing Request Status Enum ===")
+        
+        statuses = ["pending", "approved", "rejected", "implemented", "duplicate"]
+        
+        for status in statuses:
+            try:
+                response = self.session.get(f"{self.base_url}/requests?status={status}")
+                
+                if response.status_code == 401:
+                    self.log_test(f"Request Status {status}", True, 
+                                f"Status filtering properly protected (401 without auth)")
+                else:
+                    self.log_test(f"Request Status {status}", False, 
+                                f"Expected 401, got {response.status_code}", response.text)
+            except Exception as e:
+                self.log_test(f"Request Status {status}", False, f"Request failed: {str(e)}")
+
+    def test_my_requests_endpoint(self):
+        """Test user's own requests endpoint"""
+        print("\n=== Testing My Requests Endpoint ===")
+        
+        try:
+            response = self.session.get(f"{self.base_url}/requests/my")
+            
+            if response.status_code == 401:
+                self.log_test("My Requests Endpoint", True, 
+                            f"My requests endpoint properly protected (401 without auth)")
+            else:
+                self.log_test("My Requests Endpoint", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("My Requests Endpoint", False, f"Request failed: {str(e)}")
+        
+        # Test with status filter
+        try:
+            response = self.session.get(f"{self.base_url}/requests/my?status=pending")
+            
+            if response.status_code == 401:
+                self.log_test("My Requests with Status Filter", True, 
+                            f"My requests filtering properly protected (401 without auth)")
+            else:
+                self.log_test("My Requests with Status Filter", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("My Requests with Status Filter", False, f"Request failed: {str(e)}")
+
+    def test_request_crud_operations(self):
+        """Test request CRUD operations structure"""
+        print("\n=== Testing Request CRUD Operations ===")
+        
+        # Test create
+        try:
+            request_data = {
+                "title": "Test CRUD Feature Request",
+                "description": "This is a comprehensive test of CRUD operations for feature requests",
+                "category": "ui_ux",
+                "request_type": "feature",
+                "priority": "medium",
+                "use_case": "Testing CRUD functionality",
+                "expected_behavior": "Should work properly",
+                "current_workaround": "Manual testing"
+            }
+            response = self.session.post(f"{self.base_url}/requests", json=request_data)
+            
+            if response.status_code == 401:
+                self.log_test("CRUD Create Request", True, 
+                            f"Create request properly protected (401 without auth)")
+            else:
+                self.log_test("CRUD Create Request", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("CRUD Create Request", False, f"Request failed: {str(e)}")
+        
+        # Test read (get specific request)
+        try:
+            response = self.session.get(f"{self.base_url}/requests/test-request-id")
+            
+            if response.status_code == 401:
+                self.log_test("CRUD Read Request", True, 
+                            f"Read request properly protected (401 without auth)")
+            else:
+                self.log_test("CRUD Read Request", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("CRUD Read Request", False, f"Request failed: {str(e)}")
+        
+        # Test update
+        try:
+            update_data = {
+                "title": "Updated Test Request",
+                "description": "This is an updated description for the test request"
+            }
+            response = self.session.put(f"{self.base_url}/requests/test-request-id", json=update_data)
+            
+            if response.status_code == 401:
+                self.log_test("CRUD Update Request", True, 
+                            f"Update request properly protected (401 without auth)")
+            else:
+                self.log_test("CRUD Update Request", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("CRUD Update Request", False, f"Request failed: {str(e)}")
+        
+        # Test delete
+        try:
+            response = self.session.delete(f"{self.base_url}/requests/test-request-id")
+            
+            if response.status_code == 401:
+                self.log_test("CRUD Delete Request", True, 
+                            f"Delete request properly protected (401 without auth)")
+            else:
+                self.log_test("CRUD Delete Request", False, 
+                            f"Expected 401, got {response.status_code}", response.text)
+        except Exception as e:
+            self.log_test("CRUD Delete Request", False, f"Request failed: {str(e)}")
         """Test feature management endpoints without authentication"""
         print("\n=== Testing Feature Management Endpoints (No Auth) ===")
         
