@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Feature Rating System
-Tests all endpoints including feature management, rating system, and points system
+Backend API Testing Suite for Feature Request Submission System
+Tests all endpoints including feature requests, voting system, comments, and admin functions
 """
 
 import requests
