@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Supabase Authentication System
-Tests all endpoints and authentication flows
+Backend API Testing Suite for Feature Rating System
+Tests all endpoints including feature management, rating system, and points system
 """
 
 import requests
