@@ -2,52 +2,19 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { supabase } from "./supabaseClient";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import FeatureList from "./components/Features/FeatureList";
 import axios from "axios";
 
-const SimpleAuth = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const AppContent = () => {
+  const { user, session, loading } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
-        
-        if (session) {
-          await fetchUserProfile(session.access_token);
-        }
-        
-        setLoading(false);
-      } catch (error) {
-        console.error('Error getting session:', error);
-        setLoading(false);
-      }
-    };
-
-    getInitialSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event);
-        setUser(session?.user ?? null);
-        
-        if (session) {
-          await fetchUserProfile(session.access_token);
-        } else {
-          setUserProfile(null);
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
+    if (session) {
+      fetchUserProfile(session.access_token);
+    }
+  }, [session]);
 
   const fetchUserProfile = async (accessToken) => {
     try {
@@ -188,11 +155,13 @@ const SimpleAuth = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/*" element={<SimpleAuth />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/*" element={<AppContent />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
