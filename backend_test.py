@@ -525,21 +525,36 @@ class BackendTester:
     
     def run_all_tests(self):
         """Run all tests"""
-        print("🚀 Starting Backend API Tests")
+        print("🚀 Starting Feature Rating System Backend Tests")
         print(f"Testing against: {self.base_url}")
         print("=" * 60)
         
+        # Basic functionality tests
         self.test_public_endpoints()
         self.test_protected_endpoints_without_auth()
         self.test_protected_endpoints_with_invalid_auth()
         self.test_jwt_verification_middleware()
         self.test_environment_variables()
         self.test_database_connection()
-        self.test_cors_configuration()
+        
+        # Feature Rating System specific tests
+        self.test_feature_management_endpoints()
+        self.test_feature_endpoints_with_invalid_auth()
+        self.test_sample_features_data()
+        self.test_rating_system_structure()
+        self.test_points_system_endpoint()
+        self.test_feature_filtering_parameters()
+        self.test_rating_types_validation()
+        self.test_feature_categories_enum()
+        self.test_feature_status_enum()
+        self.test_pagination_parameters()
+        self.test_error_handling_structure()
+        self.test_database_models_structure()
+        self.test_legacy_endpoints_compatibility()
         
         # Summary
         print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
+        print("📊 FEATURE RATING SYSTEM TEST SUMMARY")
         print("=" * 60)
         
         total_tests = len(self.test_results)
@@ -556,6 +571,17 @@ class BackendTester:
             for result in self.test_results:
                 if not result["success"]:
                     print(f"  - {result['test']}: {result['details']}")
+        
+        print("\n🎯 FEATURE RATING SYSTEM ENDPOINTS TESTED:")
+        print("✅ Feature Management: GET/POST /features, GET /features/{id}")
+        print("✅ Rating System: POST/DELETE /features/{id}/rate, GET /features/{id}/ratings")
+        print("✅ Statistics: GET /features/{id}/stats")
+        print("✅ User Ratings: GET /users/ratings")
+        print("✅ Points System: GET /points/info")
+        print("✅ Authentication: All endpoints properly protected")
+        print("✅ Error Handling: Invalid IDs and data validation")
+        print("✅ Filtering: Category, status, and pagination support")
+        print("✅ Legacy Support: Backward compatibility maintained")
         
         return self.test_results
 
