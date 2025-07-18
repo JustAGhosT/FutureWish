@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, Query
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, Query, Request
 from fastapi.security import HTTPBearer
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -22,8 +22,13 @@ from request_models import (
     RequestStatus, RequestPriority, RequestType, RequestPointsConfig,
     FeatureRequestResponse, RequestCommentResponse, RequestAnalytics
 )
+from github_models import (
+    GitHubIntegrationResponse, GitHubSyncLogResponse, GitHubSyncStats,
+    GitHubWebhookPayload
+)
 from feature_service import FeatureRatingService
 from request_service import FeatureRequestService
+from github_integration_service import GitHubIntegrationService
 
 
 ROOT_DIR = Path(__file__).parent
