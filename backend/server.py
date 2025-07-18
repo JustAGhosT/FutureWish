@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Depends, HTTPException
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, Query
 from fastapi.security import HTTPBearer
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -11,6 +11,12 @@ from typing import List, Optional
 import uuid
 from datetime import datetime
 from auth import verify_jwt, get_current_user, AuthUser, User
+from models import (
+    Feature, FeatureCreate, FeatureUpdate, Rating, RatingCreate, 
+    RatingResponse, FeatureWithRatings, RatingStats, FeatureCategory, 
+    FeatureStatus, RatingType, PointsConfig
+)
+from feature_service import FeatureRatingService
 
 
 ROOT_DIR = Path(__file__).parent
@@ -20,6 +26,9 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Initialize feature service
+feature_service = FeatureRatingService(db)
 
 # Create the main app without a prefix
 app = FastAPI(title="EngageMesh API", version="1.0.0")
@@ -105,7 +114,172 @@ async def update_user_profile(
         last_login=current_user.last_login
     )
 
-# Protected routes (examples)
+# Feature Management Routes
+@api_router.get("/features", response_model=List[Feature])
+async def get_features(
+    category: Optional[FeatureCategory] = None,
+    status: Optional[FeatureStatus] = None,
+    skip: int = 0,
+    limit: int = 20,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get list of features"""
+    try:
+        features = await feature_service.get_features(
+            category=category.value if category else None,
+            status=status.value if status else None,
+            skip=skip,
+            limit=limit
+        )
+        return features
+    except Exception as e:
+        logging.error(f"Error getting features: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving features")
+
+@api_router.get("/features/{feature_id}", response_model=FeatureWithRatings)
+async def get_feature_detail(
+    feature_id: str,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get detailed feature information with user's rating"""
+    try:
+        feature = await feature_service.get_feature_by_id(feature_id)
+        if not feature:
+            raise HTTPException(status_code=404, detail="Feature not found")
+        
+        user_rating = await feature_service.get_user_rating_for_feature(
+            current_user.user_id, feature_id
+        )
+        
+        return FeatureWithRatings(
+            feature=feature,
+            user_rating=user_rating,
+            can_rate=user_rating is None
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error getting feature detail: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving feature")
+
+@api_router.post("/features", response_model=Feature)
+async def create_feature(
+    feature_data: FeatureCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Create a new feature (admin only for now)"""
+    try:
+        feature = await feature_service.create_feature(
+            feature_data.dict(),
+            current_user.id
+        )
+        return feature
+    except Exception as e:
+        logging.error(f"Error creating feature: {e}")
+        raise HTTPException(status_code=500, detail="Error creating feature")
+
+@api_router.post("/features/{feature_id}/rate")
+async def rate_feature(
+    feature_id: str,
+    rating_data: RatingCreate,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Rate a feature"""
+    try:
+        result = await feature_service.create_rating(
+            current_user.user_id,
+            feature_id,
+            rating_data
+        )
+        
+        return {
+            "message": "Rating submitted successfully",
+            "rating": result["rating"],
+            "points_earned": result["points_earned"],
+            "is_daily_first": result["is_daily_first"],
+            "bonus_applied": result["is_daily_first"]
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logging.error(f"Error rating feature: {e}")
+        raise HTTPException(status_code=500, detail="Error submitting rating")
+
+@api_router.get("/features/{feature_id}/ratings", response_model=List[RatingResponse])
+async def get_feature_ratings(
+    feature_id: str,
+    limit: int = 10,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get ratings for a feature"""
+    try:
+        ratings = await feature_service.get_feature_ratings(feature_id, limit)
+        
+        # Get user names for ratings
+        ratings_with_names = []
+        for rating in ratings:
+            user = await db.users.find_one({"id": rating.user_id})
+            user_name = user.get("name") if user else "Anonymous"
+            ratings_with_names.append(RatingResponse(
+                **rating.dict(),
+                user_name=user_name
+            ))
+        
+        return ratings_with_names
+    except Exception as e:
+        logging.error(f"Error getting feature ratings: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving ratings")
+
+@api_router.get("/features/{feature_id}/stats", response_model=RatingStats)
+async def get_feature_rating_stats(
+    feature_id: str,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get comprehensive rating statistics for a feature"""
+    try:
+        stats = await feature_service.get_rating_stats(feature_id)
+        return RatingStats(**stats)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logging.error(f"Error getting rating stats: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving statistics")
+
+@api_router.get("/users/ratings", response_model=List[Rating])
+async def get_user_ratings(
+    skip: int = 0,
+    limit: int = 20,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get current user's rating history"""
+    try:
+        ratings = await feature_service.get_user_ratings(
+            current_user.user_id, skip, limit
+        )
+        return ratings
+    except Exception as e:
+        logging.error(f"Error getting user ratings: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving ratings")
+
+@api_router.delete("/features/{feature_id}/rate")
+async def delete_rating(
+    feature_id: str,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Delete user's rating for a feature"""
+    try:
+        success = await feature_service.delete_rating(current_user.user_id, feature_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Rating not found")
+        
+        return {"message": "Rating deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting rating: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting rating")
+
+# Legacy routes (keep for backward compatibility)
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(
     input: StatusCheckCreate,
@@ -133,6 +307,20 @@ async def get_users_leaderboard(current_user: AuthUser = Depends(verify_jwt)):
     ).sort("points", -1).limit(10).to_list(10)
     
     return {"leaderboard": users}
+
+# Points information endpoint
+@api_router.get("/points/info")
+async def get_points_info(current_user: AuthUser = Depends(verify_jwt)):
+    """Get information about the points system"""
+    return {
+        "points_system": {
+            "upvote_downvote": PointsConfig.UPVOTE_DOWNVOTE_POINTS,
+            "star_rating": PointsConfig.STAR_RATING_POINTS,
+            "feedback": PointsConfig.FEEDBACK_POINTS,
+            "daily_bonus": PointsConfig.DAILY_RATING_BONUS
+        },
+        "description": "Earn points by rating features! Get bonus points for your first rating each day and extra points for leaving feedback."
+    }
 
 # Include the router in the main app
 app.include_router(api_router)
