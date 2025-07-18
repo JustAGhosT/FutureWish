@@ -287,6 +287,244 @@ async def delete_rating(
         logging.error(f"Error deleting rating: {e}")
         raise HTTPException(status_code=500, detail="Error deleting rating")
 
+# Feature Request Routes
+@api_router.post("/requests", response_model=FeatureRequestResponse)
+async def create_feature_request(
+    request_data: FeatureRequestCreate,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Submit a new feature request"""
+    try:
+        result = await request_service.create_request(request_data, current_user.user_id)
+        
+        # Get the created request with user info
+        created_request = await request_service.get_request_by_id(result["request"].id)
+        
+        return created_request
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logging.error(f"Error creating feature request: {e}")
+        raise HTTPException(status_code=500, detail="Error creating feature request")
+
+@api_router.get("/requests", response_model=List[FeatureRequestResponse])
+async def get_feature_requests(
+    status: Optional[RequestStatus] = None,
+    category: Optional[FeatureCategory] = None,
+    request_type: Optional[RequestType] = None,
+    priority: Optional[RequestPriority] = None,
+    skip: int = 0,
+    limit: int = 20,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get feature requests with filtering"""
+    try:
+        requests = await request_service.get_requests(
+            status=status,
+            category=category.value if category else None,
+            request_type=request_type,
+            priority=priority,
+            skip=skip,
+            limit=limit
+        )
+        return requests
+    except Exception as e:
+        logging.error(f"Error getting feature requests: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving feature requests")
+
+@api_router.get("/requests/my", response_model=List[FeatureRequestResponse])
+async def get_my_requests(
+    status: Optional[RequestStatus] = None,
+    skip: int = 0,
+    limit: int = 20,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get current user's feature requests"""
+    try:
+        requests = await request_service.get_requests(
+            status=status,
+            user_id=current_user.user_id,
+            skip=skip,
+            limit=limit
+        )
+        return requests
+    except Exception as e:
+        logging.error(f"Error getting user requests: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving user requests")
+
+@api_router.get("/requests/{request_id}", response_model=FeatureRequestResponse)
+async def get_request_detail(
+    request_id: str,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get detailed request information"""
+    try:
+        request = await request_service.get_request_by_id(request_id)
+        if not request:
+            raise HTTPException(status_code=404, detail="Request not found")
+        
+        return request
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error getting request detail: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving request")
+
+@api_router.put("/requests/{request_id}", response_model=FeatureRequestResponse)
+async def update_feature_request(
+    request_id: str,
+    update_data: FeatureRequestUpdate,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Update user's own feature request"""
+    try:
+        updated_request = await request_service.update_request(
+            request_id, current_user.user_id, update_data
+        )
+        if not updated_request:
+            raise HTTPException(status_code=404, detail="Request not found or cannot be updated")
+        
+        return updated_request
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating request: {e}")
+        raise HTTPException(status_code=500, detail="Error updating request")
+
+@api_router.delete("/requests/{request_id}")
+async def delete_feature_request(
+    request_id: str,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Delete user's own feature request"""
+    try:
+        success = await request_service.delete_request(request_id, current_user.user_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Request not found or cannot be deleted")
+        
+        return {"message": "Request deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting request: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting request")
+
+@api_router.post("/requests/{request_id}/vote")
+async def vote_on_request(
+    request_id: str,
+    vote_data: RequestVoteCreate,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Vote on a feature request"""
+    try:
+        result = await request_service.vote_on_request(
+            request_id, current_user.user_id, vote_data
+        )
+        
+        return {
+            "message": "Vote submitted successfully",
+            "points_spent": result["points_spent"],
+            "remaining_points": result["remaining_points"]
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logging.error(f"Error voting on request: {e}")
+        raise HTTPException(status_code=500, detail="Error submitting vote")
+
+@api_router.post("/requests/{request_id}/comments", response_model=RequestCommentResponse)
+async def add_comment_to_request(
+    request_id: str,
+    comment_data: RequestCommentCreate,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Add comment to a feature request"""
+    try:
+        comment = await request_service.add_comment(
+            request_id, current_user.user_id, comment_data
+        )
+        return comment
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logging.error(f"Error adding comment: {e}")
+        raise HTTPException(status_code=500, detail="Error adding comment")
+
+@api_router.get("/requests/{request_id}/comments", response_model=List[RequestCommentResponse])
+async def get_request_comments(
+    request_id: str,
+    skip: int = 0,
+    limit: int = 20,
+    current_user: AuthUser = Depends(verify_jwt)
+):
+    """Get comments for a feature request"""
+    try:
+        comments = await request_service.get_request_comments(
+            request_id, skip, limit
+        )
+        return comments
+    except Exception as e:
+        logging.error(f"Error getting comments: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving comments")
+
+# Admin routes (basic implementation)
+@api_router.put("/admin/requests/{request_id}")
+async def admin_update_request(
+    request_id: str,
+    update_data: AdminRequestUpdate,
+    current_user: User = Depends(get_current_user)
+):
+    """Admin update request status"""
+    try:
+        # For now, any authenticated user can act as admin
+        # In production, add proper role checking
+        updated_request = await request_service.admin_update_request(
+            request_id, current_user.id, update_data
+        )
+        
+        if not updated_request:
+            raise HTTPException(status_code=404, detail="Request not found")
+        
+        return updated_request
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error admin updating request: {e}")
+        raise HTTPException(status_code=500, detail="Error updating request")
+
+@api_router.post("/admin/requests/{request_id}/convert")
+async def convert_request_to_feature(
+    request_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Convert approved request to ratable feature"""
+    try:
+        result = await request_service.convert_request_to_feature(
+            request_id, current_user.id
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logging.error(f"Error converting request to feature: {e}")
+        raise HTTPException(status_code=500, detail="Error converting request")
+
+@api_router.get("/admin/requests/analytics", response_model=RequestAnalytics)
+async def get_request_analytics(
+    current_user: User = Depends(get_current_user)
+):
+    """Get request analytics"""
+    try:
+        analytics = await request_service.get_analytics()
+        return analytics
+    except Exception as e:
+        logging.error(f"Error getting analytics: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving analytics")
+
 # Legacy routes (keep for backward compatibility)
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(
