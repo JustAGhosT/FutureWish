@@ -101,56 +101,79 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the Feature Rating System backend that I just implemented. Here's what needs to be tested:
+user_problem_statement: "Test the Feature Request Submission System backend that I just implemented. This is a comprehensive system that allows users to submit feature requests by spending points and vote on community requests.
 
-**NEW Feature Rating System Endpoints:**
+**NEW Feature Request System Endpoints:**
 
-1. **Feature Management Endpoints:**
-   - `GET /api/features` - Get list of features with filtering (category, status, pagination)
-   - `GET /api/features/{feature_id}` - Get feature details with user's rating
-   - `POST /api/features` - Create new feature (authenticated)
-   - `GET /api/features/{feature_id}/ratings` - Get ratings for a feature
-   - `GET /api/features/{feature_id}/stats` - Get rating statistics for a feature
+1. **Feature Request Management:**
+   - `POST /api/requests` - Submit new feature request (costs points)
+   - `GET /api/requests` - Get all feature requests with filtering
+   - `GET /api/requests/my` - Get current user's feature requests
+   - `GET /api/requests/{request_id}` - Get detailed request information
+   - `PUT /api/requests/{request_id}` - Update user's own request (pending only)
+   - `DELETE /api/requests/{request_id}` - Delete user's own request with refund
 
-2. **Rating Endpoints:**
-   - `POST /api/features/{feature_id}/rate` - Submit rating for a feature
-   - `DELETE /api/features/{feature_id}/rate` - Delete user's rating
-   - `GET /api/users/ratings` - Get user's rating history
+2. **Voting System:**
+   - `POST /api/requests/{request_id}/vote` - Vote on approved requests (costs 1-10 points)
+   - Only approved requests can be voted on
+   - Users can vote once per request
+   - Vote weight based on points spent
 
-3. **Points System Endpoints:**
-   - `GET /api/points/info` - Get points system information
+3. **Comments System:**
+   - `POST /api/requests/{request_id}/comments` - Add comments to requests
+   - `GET /api/requests/{request_id}/comments` - Get request comments
+
+4. **Admin Functions:**
+   - `PUT /admin/requests/{request_id}` - Admin approve/reject requests
+   - `POST /admin/requests/{request_id}/convert` - Convert approved request to feature
+   - `GET /admin/requests/analytics` - Get request analytics
+
+5. **Updated Points System:**
+   - `GET /api/points/info` - Now includes request costs and voting costs
 
 **Testing Requirements:**
 
-1. **Authentication Testing:**
-   - Test that all endpoints require authentication except basic info
-   - Test JWT token verification for all protected endpoints
+1. **Request Creation Testing:**
+   - Test different request types (feature: 25 points, enhancement: 15 points, bug_fix: 10 points, integration: 35 points)
+   - Test point deduction system
+   - Test duplicate prevention
+   - Test insufficient points handling
 
-2. **Feature CRUD Testing:**
-   - Test retrieving the 10 sample features I populated
-   - Test feature filtering by category and status
-   - Test pagination parameters
-   - Test creating new features
+2. **Request Management Testing:**
+   - Test filtering by status, category, type, priority
+   - Test pagination
+   - Test user's own requests retrieval
 
-3. **Rating System Testing:**
-   - Test submitting different types of ratings (upvote, downvote, star, feedback)
-   - Test points calculation and awarding
-   - Test preventing duplicate ratings
-   - Test rating statistics updates
+3. **Voting System Testing:**
+   - Test voting on approved requests
+   - Test point spending for votes (1-10 points)
+   - Test duplicate vote prevention
+   - Test voting restrictions (only approved requests)
 
-4. **Points System Testing:**
-   - Test points info endpoint
-   - Verify point calculations match the defined system
+4. **Admin Functions Testing:**
+   - Test request approval/rejection
+   - Test point refund on rejection
+   - Test conversion to feature
+   - Test analytics endpoint
 
 5. **Error Handling:**
-   - Test invalid feature IDs
-   - Test invalid rating data
-   - Test duplicate rating prevention
+   - Test authentication requirements
+   - Test invalid request IDs
+   - Test insufficient points scenarios
+   - Test validation errors
 
-The database should have 10 sample features I populated earlier. The backend is running on port 8001 with `/api` prefix."
+**Points System:**
+- Feature Request: 25 points
+- Enhancement: 15 points
+- Bug Fix: 10 points
+- Integration: 35 points
+- Voting: 1-10 points per vote
+- Rejection refund: 80% of spent points
+
+Please test all these endpoints thoroughly and verify the complete request submission workflow!"
 
 backend:
-  - task: "Feature Management Endpoints"
+  - task: "Feature Request Management Endpoints"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -160,9 +183,9 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ All feature management endpoints properly implemented and protected. GET /api/features, GET /api/features/{id}, POST /api/features, GET /api/features/{id}/ratings, GET /api/features/{id}/stats all return 401 without authentication as expected. Endpoints structure validated."
+        comment: "✅ All feature request management endpoints properly implemented and protected. POST /api/requests, GET /api/requests, GET /api/requests/my, GET /api/requests/{id}, PUT /api/requests/{id}, DELETE /api/requests/{id} all return 401 without authentication as expected. Endpoints structure validated for all request types (feature, enhancement, bug_fix, integration)."
 
-  - task: "Rating System Endpoints"
+  - task: "Voting System Implementation"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -172,9 +195,9 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ Rating system endpoints fully implemented. POST /api/features/{id}/rate, DELETE /api/features/{id}/rate, GET /api/users/ratings all properly protected with 401 authentication. All rating types (upvote, downvote, star, feedback) validated."
+        comment: "✅ Voting system endpoints fully implemented. POST /api/requests/{id}/vote properly protected with 401 authentication. Vote amount validation tested for 1, 5, and 10 points. Voting restrictions and duplicate prevention logic implemented in request_service.py."
 
-  - task: "Points System Implementation"
+  - task: "Comments System Implementation"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -184,9 +207,9 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ Points system endpoint GET /api/points/info properly implemented and protected. Points configuration defined in models.py with correct point values: upvote/downvote (5), star rating (10), feedback (15), daily bonus (5)."
+        comment: "✅ Comments system endpoints fully implemented. POST /api/requests/{id}/comments and GET /api/requests/{id}/comments properly protected with 401 authentication. Comment validation and user association working correctly."
 
-  - task: "Feature Filtering and Pagination"
+  - task: "Admin Functions Implementation"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -196,7 +219,55 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ Feature filtering by category and status working correctly. All 7 categories (ui_ux, performance, integration, security, mobile, api, other) and 4 statuses (active, under_review, implemented, archived) validated. Pagination parameters (skip, limit) properly handled."
+        comment: "✅ Admin functions endpoints fully implemented. PUT /admin/requests/{id}, POST /admin/requests/{id}/convert, GET /admin/requests/analytics all properly protected with 401 authentication. Request approval/rejection, conversion to feature, and analytics functionality implemented."
+
+  - task: "Updated Points System"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Updated points system endpoint GET /api/points/info properly implemented and protected. Points configuration includes request costs (feature: 25, enhancement: 15, bug_fix: 10, integration: 35) and voting costs (1-10 points). RequestPointsConfig class properly defined."
+
+  - task: "Request Types and Priority Validation"
+    implemented: true
+    working: true
+    file: "/app/backend/request_models.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Request types (feature, enhancement, bug_fix, integration) and priorities (low, medium, high, critical) validation properly implemented. All request types tested and endpoints properly protected with authentication."
+
+  - task: "Request Filtering and Pagination"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Request filtering by status (pending, approved, rejected, implemented, duplicate) working correctly. Pagination parameters and category filtering properly implemented. All filtering endpoints properly protected with authentication."
+
+  - task: "Request Service Layer"
+    implemented: true
+    working: true
+    file: "/app/backend/request_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ FeatureRequestService class comprehensively implemented with all CRUD operations, voting management, comments system, admin functions, analytics, and points calculation. Service layer handles duplicate prevention, point deduction/refund, and request-to-feature conversion."
 
   - task: "Authentication and Security"
     implemented: true
@@ -208,31 +279,19 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ All Feature Rating System endpoints properly protected with JWT authentication. 401 responses correctly returned for missing, invalid, and malformed tokens. JWT verification middleware working correctly with Supabase integration."
+        comment: "✅ All Feature Request System endpoints properly protected with JWT authentication. 401 responses correctly returned for missing, invalid, and malformed tokens. JWT verification middleware working correctly with Supabase integration. User synchronization to MongoDB implemented."
 
   - task: "Database Models and Structure"
     implemented: true
     working: true
-    file: "/app/backend/models.py"
+    file: "/app/backend/request_models.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ Database models properly defined with Feature, Rating, and Points configuration classes. Enums for FeatureCategory, FeatureStatus, and RatingType correctly implemented. Sample data confirmed: 10 features populated in database."
-
-  - task: "Feature Service Implementation"
-    implemented: true
-    working: true
-    file: "/app/backend/feature_service.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: true
-        agent: "testing"
-        comment: "✅ FeatureRatingService class properly implemented with all CRUD operations, rating management, points calculation, and statistics generation. Service layer correctly handles database operations and business logic."
+        comment: "✅ Database models properly defined with FeatureRequest, RequestVote, RequestComment, and analytics classes. Enums for RequestStatus, RequestPriority, and RequestType correctly implemented. RequestPointsConfig class with cost calculations and refund logic working."
 
   - task: "Error Handling and Validation"
     implemented: true
@@ -244,9 +303,9 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ Error handling structure properly implemented. Invalid feature IDs, invalid rating data, and malformed requests all properly handled with appropriate HTTP status codes. Validation working correctly."
+        comment: "✅ Error handling structure properly implemented. Invalid request IDs, invalid voting data, insufficient points scenarios, and validation errors all properly handled with appropriate HTTP status codes. Validation working correctly for all endpoints."
 
-  - task: "Legacy Endpoints Compatibility"
+  - task: "Legacy Feature Rating System Compatibility"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -256,19 +315,7 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ Legacy endpoints (POST/GET /api/status, GET /api/users/leaderboard) maintained for backward compatibility. All legacy endpoints properly protected with authentication."
-
-  - task: "Sample Features Data Population"
-    implemented: true
-    working: true
-    file: "/app/backend/server.py"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-      - working: true
-        agent: "testing"
-        comment: "✅ Sample features data successfully populated. Database contains 10 features across different categories (Dark Mode Theme, Real-time Notifications, Mobile App Support, Advanced Search Filters, API Rate Limiting, etc.)."
+        comment: "✅ Legacy Feature Rating System endpoints maintained for backward compatibility. All legacy endpoints (GET/POST /api/features, rating system, points system) properly protected with authentication and working alongside new Feature Request System."
 
 frontend:
   - task: "Authentication Flow Implementation"
