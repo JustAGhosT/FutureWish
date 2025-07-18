@@ -1028,7 +1028,7 @@ class BackendTester:
     
     def run_all_tests(self):
         """Run all tests"""
-        print("🚀 Starting Feature Rating System Backend Tests")
+        print("🚀 Starting Feature Request Submission System Backend Tests")
         print(f"Testing against: {self.base_url}")
         print("=" * 60)
         
@@ -1040,7 +1040,24 @@ class BackendTester:
         self.test_environment_variables()
         self.test_database_connection()
         
-        # Feature Rating System specific tests
+        # Feature Request System specific tests
+        self.test_feature_request_endpoints_without_auth()
+        self.test_admin_endpoints_without_auth()
+        self.test_request_types_validation()
+        self.test_request_priority_validation()
+        self.test_request_filtering_parameters()
+        self.test_voting_system_structure()
+        self.test_comments_system_structure()
+        self.test_admin_functions_structure()
+        self.test_updated_points_system()
+        self.test_request_validation_rules()
+        self.test_vote_amount_validation()
+        self.test_comment_validation()
+        self.test_request_status_enum()
+        self.test_my_requests_endpoint()
+        self.test_request_crud_operations()
+        
+        # Legacy Feature Rating System tests (for backward compatibility)
         self.test_feature_management_endpoints()
         self.test_feature_endpoints_with_invalid_auth()
         self.test_sample_features_data()
@@ -1057,7 +1074,7 @@ class BackendTester:
         
         # Summary
         print("\n" + "=" * 60)
-        print("📊 FEATURE RATING SYSTEM TEST SUMMARY")
+        print("📊 FEATURE REQUEST SUBMISSION SYSTEM TEST SUMMARY")
         print("=" * 60)
         
         total_tests = len(self.test_results)
@@ -1075,16 +1092,30 @@ class BackendTester:
                 if not result["success"]:
                     print(f"  - {result['test']}: {result['details']}")
         
-        print("\n🎯 FEATURE RATING SYSTEM ENDPOINTS TESTED:")
-        print("✅ Feature Management: GET/POST /features, GET /features/{id}")
-        print("✅ Rating System: POST/DELETE /features/{id}/rate, GET /features/{id}/ratings")
-        print("✅ Statistics: GET /features/{id}/stats")
-        print("✅ User Ratings: GET /users/ratings")
-        print("✅ Points System: GET /points/info")
+        print("\n🎯 FEATURE REQUEST SUBMISSION SYSTEM ENDPOINTS TESTED:")
+        print("✅ Feature Request Management:")
+        print("   - POST /api/requests - Submit new feature request")
+        print("   - GET /api/requests - Get all feature requests with filtering")
+        print("   - GET /api/requests/my - Get current user's feature requests")
+        print("   - GET /api/requests/{request_id} - Get detailed request information")
+        print("   - PUT /api/requests/{request_id} - Update user's own request")
+        print("   - DELETE /api/requests/{request_id} - Delete user's own request")
+        print("✅ Voting System:")
+        print("   - POST /api/requests/{request_id}/vote - Vote on approved requests")
+        print("✅ Comments System:")
+        print("   - POST /api/requests/{request_id}/comments - Add comments to requests")
+        print("   - GET /api/requests/{request_id}/comments - Get request comments")
+        print("✅ Admin Functions:")
+        print("   - PUT /admin/requests/{request_id} - Admin approve/reject requests")
+        print("   - POST /admin/requests/{request_id}/convert - Convert approved request to feature")
+        print("   - GET /admin/requests/analytics - Get request analytics")
+        print("✅ Updated Points System:")
+        print("   - GET /api/points/info - Includes request costs and voting costs")
         print("✅ Authentication: All endpoints properly protected")
-        print("✅ Error Handling: Invalid IDs and data validation")
-        print("✅ Filtering: Category, status, and pagination support")
-        print("✅ Legacy Support: Backward compatibility maintained")
+        print("✅ Validation: Request types, priorities, vote amounts, comments")
+        print("✅ Filtering: Status, category, type, priority with pagination")
+        print("✅ Error Handling: Invalid IDs, insufficient points, validation errors")
+        print("✅ Legacy Support: Feature Rating System backward compatibility maintained")
         
         return self.test_results
 
