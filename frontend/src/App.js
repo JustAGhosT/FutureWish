@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { supabase } from "./supabaseClient";
+import FeatureList from "./components/Features/FeatureList";
+import axios from "axios";
 
 const SimpleAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
     // Get initial session
@@ -13,6 +16,11 @@ const SimpleAuth = () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         setUser(session?.user ?? null);
+        
+        if (session) {
+          await fetchUserProfile(session.access_token);
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error getting session:', error);
@@ -27,6 +35,13 @@ const SimpleAuth = () => {
       async (event, session) => {
         console.log('Auth state changed:', event);
         setUser(session?.user ?? null);
+        
+        if (session) {
+          await fetchUserProfile(session.access_token);
+        } else {
+          setUserProfile(null);
+        }
+        
         setLoading(false);
       }
     );
@@ -34,9 +49,26 @@ const SimpleAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  const fetchUserProfile = async (accessToken) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/auth/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }
+      );
+      setUserProfile(response.data);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+      setUserProfile(null);
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -115,38 +147,40 @@ const SimpleAuth = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
-                {user?.user_metadata?.name || user?.email}
-              </span>
-              <button
-                onClick={signOut}
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
-                Sign Out
-              </button>
+              {userProfile && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-yellow-600">
+                    💎 {userProfile.points} points
+                  </span>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                </div>
+              )}
+              
+              <div className="flex items-center space-x-3">
+                {user?.user_metadata?.avatar_url && (
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
+                <span className="text-sm text-gray-700">
+                  {user?.user_metadata?.name || userProfile?.name || user?.email}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Sign Out
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Welcome to EngageMesh!
-          </h1>
-          <p className="text-gray-600 mb-8">
-            You are now logged in as {user?.user_metadata?.name || user?.email}
-          </p>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Authentication Successful! 🎉
-            </h2>
-            <p className="text-gray-600">
-              Your Supabase authentication is working perfectly. The feature management system is ready to be built!
-            </p>
-          </div>
-        </div>
+      <main>
+        <FeatureList />
       </main>
     </div>
   );
