@@ -3,133 +3,448 @@
     "test": "GET /api/",
     "success": true,
     "details": "Status: 200, Message: EngageMesh API - Feature Management Platform",
-    "timestamp": "2025-07-17T23:51:35.884331",
+    "timestamp": "2025-07-18T00:20:04.204223",
     "response_data": null
   },
   {
     "test": "GET /api/health",
     "success": true,
     "details": "Status: 200, Health: healthy",
-    "timestamp": "2025-07-17T23:51:35.894847",
+    "timestamp": "2025-07-18T00:20:04.215741",
     "response_data": null
   },
   {
     "test": "GET /auth/me (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-17T23:51:35.945963",
+    "timestamp": "2025-07-18T00:20:04.267179",
     "response_data": null
   },
   {
     "test": "PUT /auth/me (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-17T23:51:35.956258",
+    "timestamp": "2025-07-18T00:20:04.347265",
     "response_data": null
   },
   {
     "test": "POST /status (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-17T23:51:36.005603",
+    "timestamp": "2025-07-18T00:20:04.363115",
     "response_data": null
   },
   {
     "test": "GET /status (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-17T23:51:36.012981",
+    "timestamp": "2025-07-18T00:20:04.371631",
     "response_data": null
   },
   {
     "test": "GET /users/leaderboard (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-17T23:51:36.019944",
+    "timestamp": "2025-07-18T00:20:04.421335",
     "response_data": null
   },
   {
     "test": "GET /auth/me (invalid auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-17T23:51:36.068669",
+    "timestamp": "2025-07-18T00:20:04.474659",
     "response_data": null
   },
   {
     "test": "PUT /auth/me (invalid auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-17T23:51:36.075601",
+    "timestamp": "2025-07-18T00:20:04.484208",
     "response_data": null
   },
   {
     "test": "POST /status (invalid auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-17T23:51:36.123074",
+    "timestamp": "2025-07-18T00:20:04.493755",
     "response_data": null
   },
   {
     "test": "GET /status (invalid auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-17T23:51:36.129469",
+    "timestamp": "2025-07-18T00:20:04.544421",
     "response_data": null
   },
   {
     "test": "GET /users/leaderboard (invalid auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-17T23:51:36.176032",
+    "timestamp": "2025-07-18T00:20:04.553941",
     "response_data": null
   },
   {
     "test": "JWT Middleware (Empty token)",
     "success": true,
     "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-17T23:51:36.183302",
+    "timestamp": "2025-07-18T00:20:04.561872",
     "response_data": null
   },
   {
     "test": "JWT Middleware (Non-JWT string)",
     "success": true,
     "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-17T23:51:36.190384",
+    "timestamp": "2025-07-18T00:20:04.569837",
     "response_data": null
   },
   {
     "test": "JWT Middleware (Bearer without token)",
     "success": true,
     "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-17T23:51:36.237403",
+    "timestamp": "2025-07-18T00:20:04.619381",
     "response_data": null
   },
   {
     "test": "JWT Middleware (Wrong auth scheme)",
     "success": true,
     "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-17T23:51:36.244196",
+    "timestamp": "2025-07-18T00:20:04.628291",
     "response_data": null
   },
   {
     "test": "Environment Variables",
     "success": true,
     "details": "Supabase JWT secret appears to be loaded (JWT verification working)",
-    "timestamp": "2025-07-17T23:51:36.255628",
+    "timestamp": "2025-07-18T00:20:04.762017",
     "response_data": null
   },
   {
     "test": "Database Connection",
     "success": true,
     "details": "Server responding (MongoDB connection likely working)",
-    "timestamp": "2025-07-17T23:51:36.302263",
+    "timestamp": "2025-07-18T00:20:04.769791",
     "response_data": null
   },
   {
-    "test": "CORS Configuration",
-    "success": false,
-    "details": "CORS headers not found in response",
-    "timestamp": "2025-07-17T23:51:36.308468",
+    "test": "GET /features (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.818928",
+    "response_data": null
+  },
+  {
+    "test": "GET /features/test-feature-id (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.827817",
+    "response_data": null
+  },
+  {
+    "test": "POST /features (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.836051",
+    "response_data": null
+  },
+  {
+    "test": "GET /features/test-feature-id/ratings (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.845839",
+    "response_data": null
+  },
+  {
+    "test": "GET /features/test-feature-id/stats (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.895289",
+    "response_data": null
+  },
+  {
+    "test": "POST /features/test-feature-id/rate (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.904846",
+    "response_data": null
+  },
+  {
+    "test": "DELETE /features/test-feature-id/rate (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.914002",
+    "response_data": null
+  },
+  {
+    "test": "GET /users/ratings (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.923688",
+    "response_data": null
+  },
+  {
+    "test": "GET /points/info (no auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:20:04.971985",
+    "response_data": null
+  },
+  {
+    "test": "GET /features (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:04.980015",
+    "response_data": null
+  },
+  {
+    "test": "GET /features/test-feature-id (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:04.987611",
+    "response_data": null
+  },
+  {
+    "test": "POST /features (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:05.037603",
+    "response_data": null
+  },
+  {
+    "test": "GET /features/test-feature-id/ratings (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:05.046403",
+    "response_data": null
+  },
+  {
+    "test": "GET /features/test-feature-id/stats (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:05.096061",
+    "response_data": null
+  },
+  {
+    "test": "POST /features/test-feature-id/rate (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:05.105843",
+    "response_data": null
+  },
+  {
+    "test": "DELETE /features/test-feature-id/rate (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:05.115073",
+    "response_data": null
+  },
+  {
+    "test": "GET /users/ratings (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:05.123025",
+    "response_data": null
+  },
+  {
+    "test": "GET /points/info (invalid auth)",
+    "success": true,
+    "details": "Correctly returned 401 Unauthorized for invalid token",
+    "timestamp": "2025-07-18T00:20:05.171962",
+    "response_data": null
+  },
+  {
+    "test": "Sample Features Check",
+    "success": true,
+    "details": "Features endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.180356",
+    "response_data": null
+  },
+  {
+    "test": "Rating System Structure",
+    "success": true,
+    "details": "Rating endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.228577",
+    "response_data": null
+  },
+  {
+    "test": "Points System Endpoint",
+    "success": true,
+    "details": "Points info endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.242820",
+    "response_data": null
+  },
+  {
+    "test": "Feature Filtering",
+    "success": true,
+    "details": "Feature filtering endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.250964",
+    "response_data": null
+  },
+  {
+    "test": "Rating Type upvote",
+    "success": true,
+    "details": "Rating endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.300631",
+    "response_data": null
+  },
+  {
+    "test": "Rating Type downvote",
+    "success": true,
+    "details": "Rating endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.350231",
+    "response_data": null
+  },
+  {
+    "test": "Rating Type star",
+    "success": true,
+    "details": "Rating endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.399185",
+    "response_data": null
+  },
+  {
+    "test": "Rating Type feedback",
+    "success": true,
+    "details": "Rating endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.408187",
+    "response_data": null
+  },
+  {
+    "test": "Category ui_ux",
+    "success": true,
+    "details": "Category filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.416253",
+    "response_data": null
+  },
+  {
+    "test": "Category performance",
+    "success": true,
+    "details": "Category filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.465139",
+    "response_data": null
+  },
+  {
+    "test": "Category integration",
+    "success": true,
+    "details": "Category filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.473147",
+    "response_data": null
+  },
+  {
+    "test": "Category security",
+    "success": true,
+    "details": "Category filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.482059",
+    "response_data": null
+  },
+  {
+    "test": "Category mobile",
+    "success": true,
+    "details": "Category filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.531635",
+    "response_data": null
+  },
+  {
+    "test": "Category api",
+    "success": true,
+    "details": "Category filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.539846",
+    "response_data": null
+  },
+  {
+    "test": "Category other",
+    "success": true,
+    "details": "Category filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.588097",
+    "response_data": null
+  },
+  {
+    "test": "Status active",
+    "success": true,
+    "details": "Status filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.596556",
+    "response_data": null
+  },
+  {
+    "test": "Status under_review",
+    "success": true,
+    "details": "Status filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.604748",
+    "response_data": null
+  },
+  {
+    "test": "Status implemented",
+    "success": true,
+    "details": "Status filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.653607",
+    "response_data": null
+  },
+  {
+    "test": "Status archived",
+    "success": true,
+    "details": "Status filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.661736",
+    "response_data": null
+  },
+  {
+    "test": "Pagination skip=0, limit=10",
+    "success": true,
+    "details": "Pagination properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.669818",
+    "response_data": null
+  },
+  {
+    "test": "Pagination skip=10, limit=20",
+    "success": true,
+    "details": "Pagination properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.718279",
+    "response_data": null
+  },
+  {
+    "test": "Pagination skip=0, limit=5",
+    "success": true,
+    "details": "Pagination properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.768356",
+    "response_data": null
+  },
+  {
+    "test": "Invalid Feature ID Handling",
+    "success": true,
+    "details": "Invalid feature ID endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.777282",
+    "response_data": null
+  },
+  {
+    "test": "Invalid Rating Data Handling",
+    "success": true,
+    "details": "Invalid rating data endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.785618",
+    "response_data": null
+  },
+  {
+    "test": "Feature Model Structure",
+    "success": true,
+    "details": "Feature creation endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.834843",
+    "response_data": null
+  },
+  {
+    "test": "Legacy POST /status",
+    "success": true,
+    "details": "Legacy endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.846808",
+    "response_data": null
+  },
+  {
+    "test": "Legacy GET /status",
+    "success": true,
+    "details": "Legacy endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.895347",
+    "response_data": null
+  },
+  {
+    "test": "Legacy GET /users/leaderboard",
+    "success": true,
+    "details": "Legacy endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:20:05.904703",
     "response_data": null
   }
 ]
