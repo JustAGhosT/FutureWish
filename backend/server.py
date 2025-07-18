@@ -554,18 +554,28 @@ async def get_users_leaderboard(current_user: AuthUser = Depends(verify_jwt)):
     
     return {"leaderboard": users}
 
-# Points information endpoint
+# Points information endpoints
 @api_router.get("/points/info")
 async def get_points_info(current_user: AuthUser = Depends(verify_jwt)):
     """Get information about the points system"""
     return {
-        "points_system": {
+        "rating_points": {
             "upvote_downvote": PointsConfig.UPVOTE_DOWNVOTE_POINTS,
             "star_rating": PointsConfig.STAR_RATING_POINTS,
             "feedback": PointsConfig.FEEDBACK_POINTS,
             "daily_bonus": PointsConfig.DAILY_RATING_BONUS
         },
-        "description": "Earn points by rating features! Get bonus points for your first rating each day and extra points for leaving feedback."
+        "request_costs": {
+            "feature_request": RequestPointsConfig.FEATURE_REQUEST_COST,
+            "enhancement_request": RequestPointsConfig.ENHANCEMENT_REQUEST_COST,
+            "bug_fix_request": RequestPointsConfig.BUG_FIX_REQUEST_COST,
+            "integration_request": RequestPointsConfig.INTEGRATION_REQUEST_COST
+        },
+        "voting_costs": {
+            "min_vote_cost": RequestPointsConfig.VOTE_COST_MIN,
+            "max_vote_cost": RequestPointsConfig.VOTE_COST_MAX
+        },
+        "description": "Earn points by rating features! Spend points to submit feature requests and vote on community requests."
     }
 
 # Include the router in the main app
