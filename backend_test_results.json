@@ -3,448 +3,259 @@
     "test": "GET /api/",
     "success": true,
     "details": "Status: 200, Message: EngageMesh API - Feature Management Platform",
-    "timestamp": "2025-07-18T00:20:04.204223",
+    "timestamp": "2025-07-18T00:55:08.547904",
     "response_data": null
   },
   {
     "test": "GET /api/health",
     "success": true,
     "details": "Status: 200, Health: healthy",
-    "timestamp": "2025-07-18T00:20:04.215741",
+    "timestamp": "2025-07-18T00:55:08.598410",
     "response_data": null
   },
   {
-    "test": "GET /auth/me (no auth)",
+    "test": "POST /requests (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.267179",
+    "timestamp": "2025-07-18T00:55:08.610118",
     "response_data": null
   },
   {
-    "test": "PUT /auth/me (no auth)",
+    "test": "GET /requests (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.347265",
+    "timestamp": "2025-07-18T00:55:08.623077",
     "response_data": null
   },
   {
-    "test": "POST /status (no auth)",
+    "test": "GET /requests/my (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.363115",
+    "timestamp": "2025-07-18T00:55:08.670689",
     "response_data": null
   },
   {
-    "test": "GET /status (no auth)",
+    "test": "GET /requests/test-request-id (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.371631",
+    "timestamp": "2025-07-18T00:55:08.678694",
     "response_data": null
   },
   {
-    "test": "GET /users/leaderboard (no auth)",
+    "test": "PUT /requests/test-request-id (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.421335",
+    "timestamp": "2025-07-18T00:55:08.685409",
     "response_data": null
   },
   {
-    "test": "GET /auth/me (invalid auth)",
-    "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:04.474659",
-    "response_data": null
-  },
-  {
-    "test": "PUT /auth/me (invalid auth)",
-    "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:04.484208",
-    "response_data": null
-  },
-  {
-    "test": "POST /status (invalid auth)",
-    "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:04.493755",
-    "response_data": null
-  },
-  {
-    "test": "GET /status (invalid auth)",
-    "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:04.544421",
-    "response_data": null
-  },
-  {
-    "test": "GET /users/leaderboard (invalid auth)",
-    "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:04.553941",
-    "response_data": null
-  },
-  {
-    "test": "JWT Middleware (Empty token)",
-    "success": true,
-    "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-18T00:20:04.561872",
-    "response_data": null
-  },
-  {
-    "test": "JWT Middleware (Non-JWT string)",
-    "success": true,
-    "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-18T00:20:04.569837",
-    "response_data": null
-  },
-  {
-    "test": "JWT Middleware (Bearer without token)",
-    "success": true,
-    "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-18T00:20:04.619381",
-    "response_data": null
-  },
-  {
-    "test": "JWT Middleware (Wrong auth scheme)",
-    "success": true,
-    "details": "Correctly rejected malformed token",
-    "timestamp": "2025-07-18T00:20:04.628291",
-    "response_data": null
-  },
-  {
-    "test": "Environment Variables",
-    "success": true,
-    "details": "Supabase JWT secret appears to be loaded (JWT verification working)",
-    "timestamp": "2025-07-18T00:20:04.762017",
-    "response_data": null
-  },
-  {
-    "test": "Database Connection",
-    "success": true,
-    "details": "Server responding (MongoDB connection likely working)",
-    "timestamp": "2025-07-18T00:20:04.769791",
-    "response_data": null
-  },
-  {
-    "test": "GET /features (no auth)",
+    "test": "DELETE /requests/test-request-id (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.818928",
+    "timestamp": "2025-07-18T00:55:08.734930",
     "response_data": null
   },
   {
-    "test": "GET /features/test-feature-id (no auth)",
+    "test": "POST /requests/test-request-id/vote (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.827817",
+    "timestamp": "2025-07-18T00:55:08.742618",
     "response_data": null
   },
   {
-    "test": "POST /features (no auth)",
+    "test": "POST /requests/test-request-id/comments (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.836051",
+    "timestamp": "2025-07-18T00:55:08.791725",
     "response_data": null
   },
   {
-    "test": "GET /features/test-feature-id/ratings (no auth)",
+    "test": "GET /requests/test-request-id/comments (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.845839",
+    "timestamp": "2025-07-18T00:55:08.799067",
     "response_data": null
   },
   {
-    "test": "GET /features/test-feature-id/stats (no auth)",
+    "test": "PUT /admin/requests/test-request-id (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.895289",
+    "timestamp": "2025-07-18T00:55:08.847932",
     "response_data": null
   },
   {
-    "test": "POST /features/test-feature-id/rate (no auth)",
+    "test": "POST /admin/requests/test-request-id/convert (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.904846",
+    "timestamp": "2025-07-18T00:55:08.895802",
     "response_data": null
   },
   {
-    "test": "DELETE /features/test-feature-id/rate (no auth)",
+    "test": "GET /admin/requests/analytics (no auth)",
     "success": true,
     "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.914002",
+    "timestamp": "2025-07-18T00:55:08.903415",
     "response_data": null
   },
   {
-    "test": "GET /users/ratings (no auth)",
+    "test": "Request Type feature",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.923688",
+    "details": "Request type endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:08.951104",
     "response_data": null
   },
   {
-    "test": "GET /points/info (no auth)",
+    "test": "Request Type enhancement",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized",
-    "timestamp": "2025-07-18T00:20:04.971985",
+    "details": "Request type endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:08.959123",
     "response_data": null
   },
   {
-    "test": "GET /features (invalid auth)",
+    "test": "Request Type bug_fix",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:04.980015",
+    "details": "Request type endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.009807",
     "response_data": null
   },
   {
-    "test": "GET /features/test-feature-id (invalid auth)",
+    "test": "Request Type integration",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:04.987611",
+    "details": "Request type endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.017382",
     "response_data": null
   },
   {
-    "test": "POST /features (invalid auth)",
+    "test": "Vote with 1 points",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:05.037603",
+    "details": "Voting endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.024760",
     "response_data": null
   },
   {
-    "test": "GET /features/test-feature-id/ratings (invalid auth)",
+    "test": "Vote with 5 points",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:05.046403",
+    "details": "Voting endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.073114",
     "response_data": null
   },
   {
-    "test": "GET /features/test-feature-id/stats (invalid auth)",
+    "test": "Vote with 10 points",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:05.096061",
+    "details": "Voting endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.123313",
     "response_data": null
   },
   {
-    "test": "POST /features/test-feature-id/rate (invalid auth)",
+    "test": "Add Comment",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:05.105843",
+    "details": "Comment endpoint properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.134774",
     "response_data": null
   },
   {
-    "test": "DELETE /features/test-feature-id/rate (invalid auth)",
+    "test": "Get Comments",
     "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:05.115073",
+    "details": "Comments retrieval properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.185350",
     "response_data": null
   },
   {
-    "test": "GET /users/ratings (invalid auth)",
-    "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:05.123025",
-    "response_data": null
-  },
-  {
-    "test": "GET /points/info (invalid auth)",
-    "success": true,
-    "details": "Correctly returned 401 Unauthorized for invalid token",
-    "timestamp": "2025-07-18T00:20:05.171962",
-    "response_data": null
-  },
-  {
-    "test": "Sample Features Check",
-    "success": true,
-    "details": "Features endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.180356",
-    "response_data": null
-  },
-  {
-    "test": "Rating System Structure",
-    "success": true,
-    "details": "Rating endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.228577",
-    "response_data": null
-  },
-  {
-    "test": "Points System Endpoint",
+    "test": "Updated Points System",
     "success": true,
     "details": "Points info endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.242820",
+    "timestamp": "2025-07-18T00:55:09.195499",
     "response_data": null
   },
   {
-    "test": "Feature Filtering",
-    "success": true,
-    "details": "Feature filtering endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.250964",
-    "response_data": null
-  },
-  {
-    "test": "Rating Type upvote",
-    "success": true,
-    "details": "Rating endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.300631",
-    "response_data": null
-  },
-  {
-    "test": "Rating Type downvote",
-    "success": true,
-    "details": "Rating endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.350231",
-    "response_data": null
-  },
-  {
-    "test": "Rating Type star",
-    "success": true,
-    "details": "Rating endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.399185",
-    "response_data": null
-  },
-  {
-    "test": "Rating Type feedback",
-    "success": true,
-    "details": "Rating endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.408187",
-    "response_data": null
-  },
-  {
-    "test": "Category ui_ux",
-    "success": true,
-    "details": "Category filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.416253",
-    "response_data": null
-  },
-  {
-    "test": "Category performance",
-    "success": true,
-    "details": "Category filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.465139",
-    "response_data": null
-  },
-  {
-    "test": "Category integration",
-    "success": true,
-    "details": "Category filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.473147",
-    "response_data": null
-  },
-  {
-    "test": "Category security",
-    "success": true,
-    "details": "Category filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.482059",
-    "response_data": null
-  },
-  {
-    "test": "Category mobile",
-    "success": true,
-    "details": "Category filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.531635",
-    "response_data": null
-  },
-  {
-    "test": "Category api",
-    "success": true,
-    "details": "Category filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.539846",
-    "response_data": null
-  },
-  {
-    "test": "Category other",
-    "success": true,
-    "details": "Category filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.588097",
-    "response_data": null
-  },
-  {
-    "test": "Status active",
+    "test": "Filter by status pending",
     "success": true,
     "details": "Status filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.596556",
+    "timestamp": "2025-07-18T00:55:09.205629",
     "response_data": null
   },
   {
-    "test": "Status under_review",
+    "test": "Filter by status approved",
     "success": true,
     "details": "Status filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.604748",
+    "timestamp": "2025-07-18T00:55:09.256795",
     "response_data": null
   },
   {
-    "test": "Status implemented",
+    "test": "Filter by status rejected",
     "success": true,
     "details": "Status filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.653607",
+    "timestamp": "2025-07-18T00:55:09.304817",
     "response_data": null
   },
   {
-    "test": "Status archived",
+    "test": "Filter by status implemented",
     "success": true,
     "details": "Status filtering properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.661736",
+    "timestamp": "2025-07-18T00:55:09.314137",
     "response_data": null
   },
   {
-    "test": "Pagination skip=0, limit=10",
+    "test": "Filter by status duplicate",
     "success": true,
-    "details": "Pagination properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.669818",
+    "details": "Status filtering properly protected (401 without auth)",
+    "timestamp": "2025-07-18T00:55:09.363096",
     "response_data": null
   },
   {
-    "test": "Pagination skip=10, limit=20",
+    "test": "Legacy GET /features (no auth)",
     "success": true,
-    "details": "Pagination properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.718279",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.374836",
     "response_data": null
   },
   {
-    "test": "Pagination skip=0, limit=5",
+    "test": "Legacy GET /features/test-feature-id (no auth)",
     "success": true,
-    "details": "Pagination properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.768356",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.382208",
     "response_data": null
   },
   {
-    "test": "Invalid Feature ID Handling",
+    "test": "Legacy POST /features (no auth)",
     "success": true,
-    "details": "Invalid feature ID endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.777282",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.429938",
     "response_data": null
   },
   {
-    "test": "Invalid Rating Data Handling",
+    "test": "Legacy GET /features/test-feature-id/ratings (no auth)",
     "success": true,
-    "details": "Invalid rating data endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.785618",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.436128",
     "response_data": null
   },
   {
-    "test": "Feature Model Structure",
+    "test": "Legacy GET /features/test-feature-id/stats (no auth)",
     "success": true,
-    "details": "Feature creation endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.834843",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.447235",
     "response_data": null
   },
   {
-    "test": "Legacy POST /status",
+    "test": "Legacy POST /features/test-feature-id/rate (no auth)",
     "success": true,
-    "details": "Legacy endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.846808",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.505555",
     "response_data": null
   },
   {
-    "test": "Legacy GET /status",
+    "test": "Legacy DELETE /features/test-feature-id/rate (no auth)",
     "success": true,
-    "details": "Legacy endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.895347",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.520808",
     "response_data": null
   },
   {
-    "test": "Legacy GET /users/leaderboard",
+    "test": "Legacy GET /users/ratings (no auth)",
     "success": true,
-    "details": "Legacy endpoint properly protected (401 without auth)",
-    "timestamp": "2025-07-18T00:20:05.904703",
+    "details": "Correctly returned 401 Unauthorized",
+    "timestamp": "2025-07-18T00:55:09.574569",
     "response_data": null
   }
 ]
