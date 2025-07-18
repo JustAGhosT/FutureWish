@@ -42,6 +42,7 @@ db = client[os.environ['DB_NAME']]
 # Initialize services
 feature_service = FeatureRatingService(db)
 request_service = FeatureRequestService(db)
+github_service = GitHubIntegrationService(db)
 
 # Create the main app without a prefix
 app = FastAPI(title="EngageMesh API", version="1.0.0")
