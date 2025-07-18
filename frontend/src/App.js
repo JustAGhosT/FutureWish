@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import FeatureList from "./components/Features/FeatureList";
 import RequestList from "./components/Requests/RequestList";
 import MyRequests from "./components/Requests/MyRequests";
+import GitHubIntegration from "./components/GitHub/GitHubIntegration";
 import axios from "axios";
 
 const AppContent = () => {
@@ -117,7 +118,7 @@ const AppContent = () => {
             </div>
             
             {/* Navigation */}
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-4">
               <button
                 onClick={() => setCurrentView('features')}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -147,6 +148,16 @@ const AppContent = () => {
                 }`}
               >
                 My Requests
+              </button>
+              <button
+                onClick={() => setCurrentView('github')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  currentView === 'github' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                GitHub Integration
               </button>
             </div>
             
@@ -187,6 +198,7 @@ const AppContent = () => {
         {currentView === 'features' && <FeatureList />}
         {currentView === 'requests' && <RequestList />}
         {currentView === 'my-requests' && <MyRequests />}
+        {currentView === 'github' && <GitHubIntegration />}
       </main>
     </div>
   );
