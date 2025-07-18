@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
-import axios from 'axios'
 
 const AuthContext = createContext({})
 
@@ -16,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [userProfile, setUserProfile] = useState(null)
 
   useEffect(() => {
     // Get initial session
@@ -28,10 +26,6 @@ export const AuthProvider = ({ children }) => {
         } else {
           setSession(session)
           setUser(session?.user ?? null)
-          
-          if (session) {
-            await fetchUserProfile(session.access_token)
-          }
         }
       } catch (error) {
         console.error('Error getting session:', error)
@@ -48,13 +42,6 @@ export const AuthProvider = ({ children }) => {
         console.log('Auth state changed:', event, session)
         setSession(session)
         setUser(session?.user ?? null)
-        
-        if (session) {
-          await fetchUserProfile(session.access_token)
-        } else {
-          setUserProfile(null)
-        }
-        
         setLoading(false)
       }
     )
@@ -62,29 +49,12 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe()
   }, [])
 
-  const fetchUserProfile = async (accessToken) => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/auth/me`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }
-      )
-      setUserProfile(response.data)
-    } catch (error) {
-      console.error('Error fetching user profile:', error)
-    }
-  }
-
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) {
         console.error('Error signing out:', error)
       }
-      setUserProfile(null)
     } catch (error) {
       console.error('Error signing out:', error)
     }
@@ -93,10 +63,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     session,
-    userProfile,
     loading,
-    signOut,
-    fetchUserProfile
+    signOut
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
